@@ -1,3 +1,11 @@
+<?php 
+  session_start();
+  require 'config/config.php';
+  // print_r($_SESSION);
+  if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
+    header('Location:login.php');
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,252 +33,61 @@
     <!-- Content Header (Page header) -->
     <section class="">
       <div class="container-fluid">
-        <h1 style="margin: 15px 0;text-align:center;">Widgets</h1>
+        <h1 style="margin: 15px 0;text-align:center;">Blog Site</h1>
       </div><!-- /.container-fluid -->
     </section>
-
+    <?php
+      $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+      $stmt->execute();
+      $result = $stmt->fetchAll();
+    ?>
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
         <!-- /.row -->
         <div class="row">
-          <div class="col-md-4">
+          <?php
+            if($result){
+              foreach ($result as $value){
+            
+          ?>
+                    <div class="col-md-4">
             <!-- Box Comment -->
             <div class="card card-widget">
               <div class="card-header">
                 <div class="card-title" style="text-align:center;float:none;">
-                  <h4>Blog Title</h4>
+                  <h4><?php echo $value['title'] ?></h4>
                 </div>
-                <!-- <div class="user-block">
-                  <img class="img-circle" src="dist/img/user1-128x128.jpg" alt="User Image">
-                  <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
-                  <span class="description">Shared publicly - 7:30 PM Today</span>
-                </div> -->
-                <!-- /.user-block -->
-                <!-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" title="Mark as read">
-                    <i class="far fa-circle"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> -->
-                <!-- /.card-tools -->
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <a href="blog_detail.php"><img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo"></a>
-                <p>I took this photo this morning. What do you guys think?</p>
+                <a href="blog_detail.php?id=<?php echo $value['id']; ?>">
+                  <img class="img-fluid pad" src="images/<?php echo $value['image'] ?>" style="heigth:300px !important;" id="changeImg" alt="">
+                </a>
+                <!-- <p>I took this photo this morning. What do you guys think?</p> -->
               </div>
               
             </div>
             <!-- /.card -->
           </div>
 
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="text-align:center;float:none;">
-                  <h4>Blog Title</h4>
-                </div>
-                <!-- <div class="user-block">
-                  <img class="img-circle" src="dist/img/user1-128x128.jpg" alt="User Image">
-                  <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
-                  <span class="description">Shared publicly - 7:30 PM Today</span>
-                </div> -->
-                <!-- /.user-block -->
-                <!-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" title="Mark as read">
-                    <i class="far fa-circle"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> -->
-                <!-- /.card-tools -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
+          <?php 
+            }
+          }
+          ?>
 
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="text-align:center;float:none;">
-                  <h4>Blog Title</h4>
-                </div>
-                <!-- <div class="user-block">
-                  <img class="img-circle" src="dist/img/user1-128x128.jpg" alt="User Image">
-                  <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
-                  <span class="description">Shared publicly - 7:30 PM Today</span>
-                </div> -->
-                <!-- /.user-block -->
-                <!-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" title="Mark as read">
-                    <i class="far fa-circle"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> -->
-                <!-- /.card-tools -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
           <!-- /.col -->
         </div>
 
-        <!-- second row -->
-        <div class="row">
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="text-align:center;float:none;">
-                  <h4>Blog Title</h4>
-                </div>
-                <!-- <div class="user-block">
-                  <img class="img-circle" src="dist/img/user1-128x128.jpg" alt="User Image">
-                  <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
-                  <span class="description">Shared publicly - 7:30 PM Today</span>
-                </div> -->
-                <!-- /.user-block -->
-                <!-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" title="Mark as read">
-                    <i class="far fa-circle"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> -->
-                <!-- /.card-tools -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="text-align:center;float:none;">
-                  <h4>Blog Title</h4>
-                </div>
-                <!-- <div class="user-block">
-                  <img class="img-circle" src="dist/img/user1-128x128.jpg" alt="User Image">
-                  <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
-                  <span class="description">Shared publicly - 7:30 PM Today</span>
-                </div> -->
-                <!-- /.user-block -->
-                <!-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" title="Mark as read">
-                    <i class="far fa-circle"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> -->
-                <!-- /.card-tools -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="text-align:center;float:none;">
-                  <a href="blog_detail.php">
-                    <h4>Blog Title</h4>
-                  </a>
-                </div>
-                <!-- <div class="user-block">
-                  <img class="img-circle" src="dist/img/user1-128x128.jpg" alt="User Image">
-                  <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
-                  <span class="description">Shared publicly - 7:30 PM Today</span>
-                </div> -->
-                <!-- /.user-block -->
-                <!-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" title="Mark as read">
-                    <i class="far fa-circle"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> -->
-                <!-- /.card-tools -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <!-- <a href="blog_detail.php"><img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo"></a> -->
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-        </div>
         <!-- /.row -->
   </div>
   <!-- /.content-wrapper -->
 
   <footer class="main-footer" style="margin-left:0 !important">
     <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
+      <b><a href="logout.php">Logout</a></b>
     </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2022 <a href="https://adminlte.io">Moe Sandar</a>.</strong> All rights reserved.
   </footer>
 
   <!-- Control Sidebar -->

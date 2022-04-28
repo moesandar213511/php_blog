@@ -1,9 +1,53 @@
+<?php 
+  session_start();
+  require 'config/config.php';
+  // print_r($_SESSION);
+  if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
+    header('Location:login.php');
+  }
+
+  // select post by id
+  $stmt1 = $pdo->prepare("SELECT * FROM posts WHERE id=".$_GET['id']);
+  $stmt1->execute();
+  $result = $stmt1->fetch(PDO::FETCH_ASSOC);
+
+  // select comment
+  $stmt2 = $pdo->prepare("SELECT * FROM comments WHERE post_id=".$_GET['id']);
+  $stmt2->execute();
+  $comResult = $stmt2->fetchAll();
+  
+  if($comResult){
+    // select author name in comment
+    $author_id = $comResult[0]['author_id'];
+    $stmt3 = $pdo->prepare("SELECT * FROM users WHERE id=".$author_id);
+    $stmt3->execute();
+    $authorResult = $stmt3->fetchAll();
+  }
+
+
+  
+
+  // insert comments in db
+  if(!empty($_POST)){
+    $comment = $_POST['comment'];
+    $post_id = $_GET['id'];
+
+    $stmt = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES(:content,:author_id,:post_id)");
+    $com = $stmt->execute(
+        array(':content' => $comment,':author_id' => $_SESSION['user_id'], ':post_id' => $post_id)
+    );
+    if($com){
+        header('Location:blog_detail.php?id='.$post_id);
+    }
+  }
+  
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Widgets</title>
+  <title>User | Blog Detail</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -34,64 +78,40 @@
             <div class="card card-widget">
               <div class="card-header">
                 <div class="card-title" style="text-align:center;float:none;">
-                  <h4>Blog Title</h4>
+                  <h4><?php echo $result['title'] ?></h4>
                 </div>
-                <!-- <div class="user-block">
-                  <img class="img-circle" src="dist/img/user1-128x128.jpg" alt="User Image">
-                  <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
-                  <span class="description">Shared publicly - 7:30 PM Today</span>
-                </div> -->
-                <!-- /.user-block -->
-                <!-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" title="Mark as read">
-                    <i class="far fa-circle"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> -->
                 <!-- /.card-tools -->
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
+                <img class="img-fluid pad" src="images/<?php echo $result['image'] ?>" alt="Photo"> <br><br>
 
-                <p>I took this photo this morning. What do you guys think?</p>
+                <p><?php echo $result['content']; ?></p>
                 <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i> Share</button>
                 <button type="button" class="btn btn-default btn-sm"><i class="far fa-thumbs-up"></i> Like</button>
-                <span class="float-right text-muted">127 likes - 3 comments</span>
+                <span class="float-right text-muted">127 likes - 3 comments</span><br><br>
+                <h3>Comments</h3><hr>
+                <a href="index.php" class="btn btn-default" type="button">Back</a>
               </div>
+
+
               <div class="card-footer card-comments">
                 <div class="card-comment">
                   <!-- User image -->
-                  <img class="img-circle img-sm" src="dist/img/user3-128x128.jpg" alt="User Image">
+                  <!-- <img class="img-circle img-sm" src="dist/img/user3-128x128.jpg" alt="User Image"> -->
 
-                  <div class="comment-text">
+                  <div class="comment-text" style="margin-left: 0 !important">
+                  <?php if($comResult){ ?>
                     <span class="username">
-                      Maria Gonzales
-                      <span class="text-muted float-right">8:03 PM Today</span>
+                      <?php echo $authorResult[0]['name'] ?>
+                      <span class="text-muted float-right">
+                      <?php echo $comResult[0]['created_at'] ?>
+                      </span>
                     </span><!-- /.username -->
-                    It is a long established fact that a reader will be distracted
-                    by the readable content of a page when looking at its layout.
-                  </div>
-                  <!-- /.comment-text -->
-                </div>
-                <!-- /.card-comment -->
-                <div class="card-comment">
-                  <!-- User image -->
-                  <img class="img-circle img-sm" src="dist/img/user5-128x128.jpg" alt="User Image">
-
-                  <div class="comment-text">
-                    <span class="username">
-                      Nora Havisham
-                      <span class="text-muted float-right">8:03 PM Today</span>
-                    </span><!-- /.username -->
-                    The point of using Lorem Ipsum is that it hrs a morer-less
-                    normal distribution of letters, as opposed to using
-                    'Content here, content here', making it look like readable English.
+                    <?php echo $comResult[0]['content'] ?>
+                  <?php }else{ ?>
+                  <h4>No comment</h4>
+                  <?php } ?>
                   </div>
                   <!-- /.comment-text -->
                 </div>
@@ -99,11 +119,11 @@
               </div>
               <!-- /.card-footer -->
               <div class="card-footer">
-                <form action="#" method="post">
-                  <img class="img-fluid img-circle img-sm" src="dist/img/user5-128x128.jpg" alt="Alt Text">
+                <form action="" method="post">
+                  <!-- <img class="img-fluid img-circle img-sm" src="dist/img/user5-128x128.jpg" alt="Alt Text"> -->
                   <!-- .img-push is used to add margin to elements next to floating images -->
                   <div class="img-push">
-                    <input type="text" class="form-control form-control-sm" placeholder="Press enter to post comment">
+                    <input type="text" name="comment" class="form-control form-control-sm" placeholder="Press enter to post comment">
                   </div>
                 </form>
               </div>
@@ -121,9 +141,9 @@
 
   <footer class="main-footer" style="margin-left:0 !important">
     <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
+      <b><a href="logout.php">Logout</a></b>
     </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2022 <a href="https://adminlte.io">Moe Sandar</a>.</strong> All rights reserved.
   </footer>
 
   <!-- Control Sidebar -->
