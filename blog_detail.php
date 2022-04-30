@@ -16,12 +16,19 @@
   $stmt2->execute();
   $comResult = $stmt2->fetchAll();
   
+  // print'<pre>';
+  // print_r($comResult);
+  // echo "<hr>";
+
+  $authorResult = [];
   if($comResult){
     // select author name in comment
-    $author_id = $comResult[0]['author_id'];
-    $stmt3 = $pdo->prepare("SELECT * FROM users WHERE id=".$author_id);
-    $stmt3->execute();
-    $authorResult = $stmt3->fetchAll();
+    foreach($comResult as $key => $value){
+      $author_id = $comResult[$key]['author_id'];
+      $stmt3 = $pdo->prepare("SELECT * FROM users WHERE id=".$author_id);
+      $stmt3->execute();
+      $authorResult[] = $stmt3->fetchAll();
+    }
   }
 
 
@@ -102,13 +109,16 @@
 
                   <div class="comment-text" style="margin-left: 0 !important">
                   <?php if($comResult){ ?>
-                    <span class="username">
-                      <?php echo $authorResult[0]['name'] ?>
-                      <span class="text-muted float-right">
-                      <?php echo $comResult[0]['created_at'] ?>
-                      </span>
-                    </span><!-- /.username -->
-                    <?php echo $comResult[0]['content'] ?>
+                    <?php foreach ($comResult as $key => $value) { ?>
+                        <span class="username">
+                        <?php echo $authorResult[$key][0]['name'] ?>
+                        <span class="text-muted float-right">
+                        <?php echo $value['created_at'] ?>
+                        </span>
+                        </span><!-- /.username -->
+                      <?php echo $value['content'] ?>
+                    <?php } ?>
+                    
                   <?php }else{ ?>
                   <h4>No comment</h4>
                   <?php } ?>

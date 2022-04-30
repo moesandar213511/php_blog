@@ -2,7 +2,6 @@
   session_start();
   require '../config/config.php';
   // print_r($_SESSION);
-  // die();
 
   // logout လုပ်ပြီးလဲ admin pages link တွေကို ထည့်ရှာလို့ မရအောင်တား။
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
@@ -35,7 +34,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Blogs Listings</h3>
+                <h3 class="card-title">Users Listings</h3>
               </div>
 
               <?php 
@@ -44,26 +43,26 @@
                   }else{
                     $pageno = 1;
                   }
-                  $numOfRecords = 3;
+                  $numOfRecords = 5;
                   $offset = ($pageno-1)*$numOfRecords;
 
                   if(empty($_POST['search']) && empty($_COOKIE['search'])){
-                    $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+                    $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC");
                     $stmt->execute();
                     $rawResult = $stmt->fetchAll();
                     $total_pages = ceil(count($rawResult)/$numOfRecords);
 
-                    $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfRecords");
+                    $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC LIMIT $offset,$numOfRecords");
                     $stmt->execute();
                     $result = $stmt->fetchAll();
                   }else{
                     $search = (!empty($_POST['search'])) ? $_POST['search'] : $_COOKIE['search'];
-                    $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$search%' ORDER BY id DESC");
+                    $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$search%' ORDER BY id DESC");
                     $stmt->execute();
                     $rawResult = $stmt->fetchAll();
                     $total_pages = ceil(count($rawResult)/$numOfRecords);
 
-                    $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$search%' ORDER BY id DESC LIMIT $offset,$numOfRecords");
+                    $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$search%' ORDER BY id DESC LIMIT $offset,$numOfRecords");
                     $stmt->execute();
                     $result = $stmt->fetchAll();
                   }
@@ -71,15 +70,16 @@
               <!-- /.card-header -->
               <div class="card-body">
                 <div>
-                  <a href="add.php" type="button" class="btn btn-success">Create Blog Post</a>
+                  <a href="user_add.php" type="button" class="btn btn-success">Create User</a>
                 </div>
                 <br>
                 <table class="table table-bordered">
                   <thead>
                     <tr>
                       <th style="width: 10px">#</th>
-                      <th>Title</th>
-                      <th>Content</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Role</th>
                       <th style="width: 40px">Actions</th>
                     </tr>
                   </thead>
@@ -92,8 +92,9 @@
                     ?>
                     <tr>
                       <td><?php echo $i; ?></td>
-                      <td><?php echo $value['title']; ?></td>
-                      <td><?php echo substr($value['content'],0,80) ?></td>
+                      <td><?php echo $value['name']; ?></td>
+                      <td><?php echo $value['email'] ?></td>
+                      <td><?php if($value['role'] == 0){echo "User";}else{echo "Admin";} ?></td>
                       <td style="width:10%;">
                         <!-- <div class="row">
                           <a href="#" type="button" class="btn btn-warning"><i class="fas fa-edit"></i><a>&nbsp;&nbsp;
@@ -101,10 +102,10 @@
                         </div> -->
                         <div class="btn-group">
                           <div class="container">
-                            <a href="edit.php?id=<?php echo $value['id'] ?>" type="button" class="btn btn-warning"><i class="fas fa-edit"></i><a>
+                            <a href="user_edit.php?id=<?php echo $value['id'] ?>" type="button" class="btn btn-warning"><i class="fas fa-edit"></i><a>
                           </div>
                           <div class="container">
-                            <a href="delete.php?id=<?php echo $value['id'] ?>" onclick="return confirm('Are you sure you want to delete this item')" type="button" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
+                            <a href="user_delete.php?id=<?php echo $value['id'] ?>" onclick="return confirm('Are you sure you want to delete this item')" type="button" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
                           </div>
                         </div>
                       </td>

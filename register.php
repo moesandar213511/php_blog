@@ -14,9 +14,10 @@
     if($user){
         echo "<script>alert('Email have already exists.'); window.location.href = 'register.php'</script>";
     }else{
-        $stmt = $pdo->prepare("INSERT INTO users(name,email,password) VALUES(:name,:email,:password)");
+        $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role)");
         $result = $stmt->execute(
-            array(':name' => $name,':email' => $email, ':password' => $password)
+            array(':name' => $name,':email' => $email, ':password' => $password, 
+            ':role' => 0)
         );
         if($result){
             echo "<script>alert('Successfully Registered. You can login now!');window.location.href = 'login.php'</script>";

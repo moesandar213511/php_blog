@@ -11,7 +11,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Widgets</title>
+  <title>User | Home</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -37,9 +37,26 @@
       </div><!-- /.container-fluid -->
     </section>
     <?php
+      if(!empty($_GET['pageno'])){
+        $pageno = $_GET['pageno'];
+      }else{
+        $pageno = 1;
+      }
+      $numOfRecords = 9;
+      $offset = ($pageno-1)*$numOfRecords;
+
       $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
       $stmt->execute();
+      $rawResult = $stmt->fetchAll();
+      $total_pages = ceil(count($rawResult)/$numOfRecords);
+
+      $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfRecords");
+      $stmt->execute();
       $result = $stmt->fetchAll();
+
+      // $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+      // $stmt->execute();
+      // $result = $stmt->fetchAll();
     ?>
     <!-- Main content -->
     <section class="content">
@@ -78,7 +95,19 @@
 
           <!-- /.col -->
         </div>
-
+          <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                  <li class="page-item"><a class="page-link" href="?pageno=1">First</a></li>
+                  <li class="page-item <?php if($pageno <= 1){ echo 'disabled';} ?>">
+                    <a class="page-link" href="<?php if($pageno <= 1){ echo '#';}else{ echo "?pageno=".($pageno-1); } ?>">Previous</a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#"><?php echo $pageno; ?></a></li>
+                  <li class="page-item <?php if($pageno >= $total_pages){ echo 'disabled';} ?>">
+                    <a class="page-link" href="<?php if($pageno >= $total_pages){ echo '#';}else{ echo "?pageno=".($pageno+1); } ?>">Next</a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="<?php echo "?pageno=".$total_pages ?>">Last</a></li>
+                </ul>
+              </div>
         <!-- /.row -->
   </div>
   <!-- /.content-wrapper -->

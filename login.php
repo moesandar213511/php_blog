@@ -15,6 +15,7 @@
       if($user['password'] == $password){
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['name'];
+        $_SESSION['role'] = $user['role'];
         $_SESSION['logged_in'] = time();
         header('Location:index.php');
       }else{
@@ -31,7 +32,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin | Log in</title>
+  <title>User | Log in</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">

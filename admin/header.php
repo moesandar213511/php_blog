@@ -41,7 +41,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <a href="#" class="nav-link">Contact</a>
       </li> -->
     </ul>
-
+    <?php 
+      $link = $_SERVER['PHP_SELF'];
+      $link_array = explode('/',$link);
+      $page = end($link_array);
+      // print($page);
+    ?>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
@@ -50,7 +55,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <i class="fas fa-search"></i>
         </a>
         <div class="navbar-search-block">
-          <form class="form-inline" action="index.php" method="post">
+          <form class="form-inline" action="<?php ($page == 'index.php') ? 'index.php' : 'user_list.php'; ?>" method="post">
             <div class="input-group input-group-sm">
               <input class="form-control form-control-navbar" name="search" type="search" placeholder="Search" aria-label="Search">
               <div class="input-group-append">
@@ -137,6 +142,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Blogs
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="user_list.php" class="nav-link">
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Users
                 <!-- <span class="right badge badge-danger">New</span> -->
               </p>
             </a>
