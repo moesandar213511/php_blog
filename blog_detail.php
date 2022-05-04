@@ -32,6 +32,7 @@
   }
 
 
+
   // insert comments in db
   if(!empty($_POST)){
     if(empty($_POST['comment'])){

@@ -3,7 +3,7 @@
   require "../config/config.php";
 
   if(!empty($_POST)){
-    if(empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6){
+    if(empty($_POST['email']) || empty($_POST['password'])){
       // || strlen($_POST['password']) < 6
       if(empty($_POST['email'])){
         $emailError = "Email can't be empty";
@@ -11,9 +11,9 @@
       if(empty($_POST['password'])){
         $passwordError = "Password can't be empty";
       }
-      if(strlen($_POST['password']) < 6){
-        $passwordError = "Password must be 6 characters at least";
-      }
+      // if(strlen($_POST['password']) < 6){
+      //   $passwordError = "Password must be 6 characters at least";
+      // }
     }else{  
       $email = $_POST['email'];
       $password = $_POST['password'];
@@ -22,9 +22,16 @@
       $stmt->bindValue(':email',$email);
       $stmt->execute();
       $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+      
+      // print'<pre>';
+      // print_r(password_hash($password,PASSWORD_DEFAULT));
+      // echo "<br>";
+      // print_r($user['password']);
+      // exit();
+
+
       if($user){
-        if($user['password'] == $password){
+        if(password_verify($password,$user['password'])){
           $_SESSION['user_id'] = $user['id'];
           $_SESSION['username'] = $user['name'];
           $_SESSION['role'] = $user['role'];

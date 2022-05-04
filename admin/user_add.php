@@ -11,7 +11,7 @@
 
   if(!empty($_POST)){
     // backend validation
-    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password'])){
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6){
       // || strlen($_POST['password']) < 6
       if(empty($_POST['name'])){
         $nameError = "Name can't be empty";
@@ -22,38 +22,34 @@
       if(empty($_POST['password'])){
         $passwordError = "Password can't be empty";
       }
-      // if(strlen($_POST['password']) < 6){
-      //   $passwordError = "Password must be 6 characters at least";
-      // }
+      if(strlen($_POST['password']) < 6){
+        $passwordError = "Password must be 6 characters at least";
+      }
     }else{
       $name = $_POST['name'];
       $email = $_POST['email'];
-      $password = $_POST['password'];
+      $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
 
-      if(strlen($password) < 6){
-        $passwordError = "Password must be 6 characters at least";
-      }else{
-        if(empty($_POST['role'])){ // if check is not on & is not admin,
+      if(empty($_POST['role'])){ // if check is not on & is not admin,
           $role = 0;
-        }else{ // if is admin,
-            $role = 1;
-        }
+      }else{ // if is admin,
+          $role = 1;
+      }
 
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
-        $stmt->bindValue(':email',$email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $stmt->bindValue(':email',$email);
+      $stmt->execute();
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if($user){ 
-          echo "<script>alert('Email duplicated.'); window.location.href = 'user_add.php'</script>";
-        }else{
-          $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role)");
-          $result = $stmt->execute(
-              array(':name' => $name,':email' => $email, ':password' => $password, ':role' => $role)
-          );
-          if($result){
-              echo "<script>alert('Successfully User Added.');window.location.href='user_list.php';</script>";
-          }
+      if($user){ 
+        echo "<script>alert('Email duplicated.'); window.location.href = 'user_add.php'</script>";
+      }else{
+        $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role)");
+        $result = $stmt->execute(
+            array(':name' => $name,':email' => $email, ':password' => $password, ':role' => $role)
+        );
+        if($result){
+            echo "<script>alert('Successfully User Added.');window.location.href='user_list.php';</script>";
         }
       }
     }

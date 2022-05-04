@@ -24,7 +24,7 @@
       $id = $_POST['id'];
       $name = $_POST['name'];
       $email = $_POST['email'];
-      $password = $_POST['password'];
+      $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
 
       // print'<pre>';
       // print_r($_POST);
@@ -97,7 +97,7 @@
                       <div class="form-group">
                           <label for="">Password</label><br>
                           <p style="color: red;"><?php echo empty($passwordError) ? '' : "*".$passwordError; ?></p>
-                          <span style="font-size:10px;">The password has already taken.</span>
+                          <span style="font-size:10px;">This user has a password.</span>
                           <input type="password" class="form-control" name="password" value="">
                       </div>
                       <div class="form-group">
