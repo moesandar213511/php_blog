@@ -1,6 +1,7 @@
 <?php 
   session_start();
   require "../config/config.php";
+  require '../config/common.php';
 
   if(!empty($_POST)){
     if(empty($_POST['email']) || empty($_POST['password'])){
@@ -74,6 +75,8 @@
       <p class="login-box-msg">Sign in to start your session</p>
 
       <form action="login.php" method="post">
+        <!-- config/common.php -->
+        <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
         <div class="input-group mb-3">
           <p style="color: red;"><?php echo empty($emailError) ? '' : "*".$emailError; ?></p><br>
           <input type="email" name="email" class="form-control" placeholder="Email">

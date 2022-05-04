@@ -1,6 +1,8 @@
 <?php 
   session_start();
   require '../config/config.php';
+  require '../config/common.php';
+
   // print_r($_SESSION);
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
@@ -10,6 +12,9 @@
   }
 
   if(!empty($_POST)){
+    //  //csrf protection (look config/common.php)
+    // if (!hash_equals($_SESSION['_token'], $_POST['_token'])) die();
+
     // backend validation is most secure.
     if(empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image'])){
       if(empty($_POST['title'])){
@@ -42,7 +47,7 @@
               array(':title' => $title,':content' => $content, ':author_id' => $_SESSION['user_id'], ':image' => $image)
           );
           if($result){
-              echo "<script>alert('Successfully Added.');</script>";
+              echo "<script>alert('Successfully Added.');window.location.href='index.php';</script>";
           }
       }
     }
@@ -60,6 +65,9 @@
             <div class="card">
               <div class="card-body">
                   <form class="" action="add.php" method="post" enctype="multipart/form-data">
+                      <!-- config/common.php -->
+                      <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+
                       <div class="form-group">
                           <label for="">Title</label><br>
                           <p style="color: red;"><?php echo empty($titleError) ? '' : "*".$titleError; ?></p>

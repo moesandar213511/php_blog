@@ -1,6 +1,8 @@
 <?php 
   session_start();
   require 'config/config.php';
+  require 'config/common.php';
+
   // print_r($_SESSION);
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
@@ -133,6 +135,8 @@
               <!-- /.card-footer -->
               <div class="card-footer">
                 <form action="" method="post">
+                  <!-- config/common.php -->
+                  <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
                   <!-- <img class="img-fluid img-circle img-sm" src="dist/img/user5-128x128.jpg" alt="Alt Text"> -->
                   <!-- .img-push is used to add margin to elements next to floating images -->
                   <div class="img-push">
