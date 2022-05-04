@@ -10,33 +10,53 @@
   }
 
   if(!empty($_POST)){
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    if(empty($_POST['role'])){ // if check is not on & is not admin,
-        $role = 0;
-    }else{ // if is admin,
-        $role = 1;
-    }
-
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $stmt->bindValue(':email',$email);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if($user){ 
-        echo "<script>alert('Email duplicated.'); window.location.href = 'user_add.php'</script>";
+    // backend validation
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password'])){
+      // || strlen($_POST['password']) < 6
+      if(empty($_POST['name'])){
+        $nameError = "Name can't be empty";
+      }
+      if(empty($_POST['email'])){
+        $emailError = "Email can't be empty";
+      }
+      if(empty($_POST['password'])){
+        $passwordError = "Password can't be empty";
+      }
+      // if(strlen($_POST['password']) < 6){
+      //   $passwordError = "Password must be 6 characters at least";
+      // }
     }else{
-        $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role)");
-        $result = $stmt->execute(
-            array(':name' => $name,':email' => $email, ':password' => $password, ':role' => $role)
-        );
-        if($result){
-            echo "<script>alert('Successfully User Added.');window.location.href='user_list.php';</script>";
-        }
-    }
+      $name = $_POST['name'];
+      $email = $_POST['email'];
+      $password = $_POST['password'];
 
+      if(strlen($password) < 6){
+        $passwordError = "Password must be 6 characters at least";
+      }else{
+        if(empty($_POST['role'])){ // if check is not on & is not admin,
+          $role = 0;
+        }else{ // if is admin,
+            $role = 1;
+        }
+
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+        $stmt->bindValue(':email',$email);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($user){ 
+          echo "<script>alert('Email duplicated.'); window.location.href = 'user_add.php'</script>";
+        }else{
+          $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role)");
+          $result = $stmt->execute(
+              array(':name' => $name,':email' => $email, ':password' => $password, ':role' => $role)
+          );
+          if($result){
+              echo "<script>alert('Successfully User Added.');window.location.href='user_list.php';</script>";
+          }
+        }
+      }
+    }
   }
 
 ?>
@@ -52,16 +72,19 @@
               <div class="card-body">
                   <form class="" action="user_add.php" method="post" enctype="multipart/form-data">
                       <div class="form-group">
-                          <label for="">Name</label>
-                          <input type="text"  class="form-control" name="name" value="" required>
+                          <label for="">Name</label><br>
+                          <p style="color: red;"><?php echo empty($nameError) ? '' : "*".$nameError; ?></p>
+                          <input type="text"  class="form-control" name="name" value="">
                       </div>
                       <div class="form-group">
-                          <label for="">Email</label>
-                          <input type="email"  class="form-control" name="email" value="" required>
+                          <label for="">Email</label><br>
+                          <p style="color: red;"><?php echo empty($emailError) ? '' : "*".$emailError; ?></p>
+                          <input type="email"  class="form-control" name="email" value="">
                       </div>
                       <div class="form-group">
                           <label for="">Password</label><br>
-                          <input type="password" class="form-control" name="password" value="" required>
+                          <p style="color: red;"><?php echo empty($passwordError) ? '' : "*".$passwordError; ?></p>
+                          <input type="password" class="form-control" name="password" value="">
                       </div>
                       <div class="form-group">
                           <label for="">Role</label><br>

@@ -3,26 +3,39 @@
   require "../config/config.php";
 
   if(!empty($_POST)){
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $stmt->bindValue(':email',$email);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-  
-    if($user){
-      if($user['password'] == $password){
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['name'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['logged_in'] = time();
-        header('Location:index.php');
-      }else{
-        echo "<script>alert('Incorrect Password. Try Again.'); window.location.href = 'login.php'</script>";
+    if(empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6){
+      // || strlen($_POST['password']) < 6
+      if(empty($_POST['email'])){
+        $emailError = "Email can't be empty";
       }
+      if(empty($_POST['password'])){
+        $passwordError = "Password can't be empty";
+      }
+      if(strlen($_POST['password']) < 6){
+        $passwordError = "Password must be 6 characters at least";
+      }
+    }else{  
+      $email = $_POST['email'];
+      $password = $_POST['password'];
+
+      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $stmt->bindValue(':email',$email);
+      $stmt->execute();
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+      if($user){
+        if($user['password'] == $password){
+          $_SESSION['user_id'] = $user['id'];
+          $_SESSION['username'] = $user['name'];
+          $_SESSION['role'] = $user['role'];
+          $_SESSION['logged_in'] = time();
+          header('Location:index.php');
+        }else{
+          echo "<script>alert('Incorrect Password. Try Again.'); window.location.href = 'login.php'</script>";
+        }
+      }
+      echo "<script>alert('Incorrect Credentials.');</script>";
     }
-    echo "<script>alert('Incorrect Credentials.');</script>";
   }
 ?>
 
@@ -55,6 +68,7 @@
 
       <form action="login.php" method="post">
         <div class="input-group mb-3">
+          <p style="color: red;"><?php echo empty($emailError) ? '' : "*".$emailError; ?></p><br>
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
@@ -69,6 +83,7 @@
               <span class="fas fa-lock"></span>
             </div>
           </div>
+          <p style="color: red;"><?php echo empty($passwordError) ? '' : "*".$passwordError; ?></p><br>
         </div>
         <div class="row">
           <!-- /.col -->

@@ -3,25 +3,45 @@
   require "config/config.php";
 
   if(!empty($_POST)){
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    // print'<pre>';
+    // print_r($_POST);
+    // exit();
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $stmt->bindValue(':email',$email);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if($user){
-        echo "<script>alert('Email have already exists.'); window.location.href = 'register.php'</script>";
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6){
+      // || strlen($_POST['password']) < 6
+      if(empty($_POST['name'])){
+        $nameError = "Name can't be empty";
+      }
+      if(empty($_POST['email'])){
+        $emailError = "Email can't be empty";
+      }
+      if(empty($_POST['password'])){
+        $passwordError = "Password can't be empty";
+      }
+      if(strlen($_POST['password']) < 6){
+        $passwordError = "Password must be 6 characters at least";
+      }
     }else{
-        $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role)");
-        $result = $stmt->execute(
-            array(':name' => $name,':email' => $email, ':password' => $password, 
-            ':role' => 0)
-        );
-        if($result){
-            echo "<script>alert('Successfully Registered. You can login now!');window.location.href = 'login.php'</script>";
-        }
+      $name = $_POST['name'];
+      $email = $_POST['email'];
+      $password = $_POST['password'];
+
+      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $stmt->bindValue(':email',$email);
+      $stmt->execute();
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
+      if($user){
+          echo "<script>alert('Email have already exists.'); window.location.href = 'register.php'</script>";
+      }else{
+          $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES(:name,:email,:password,:role)");
+          $result = $stmt->execute(
+              array(':name' => $name,':email' => $email, ':password' => $password, 
+              ':role' => 0)
+          );
+          if($result){
+              echo "<script>alert('Successfully Registered. You can login now!');window.location.href = 'login.php'</script>";
+          }
+      }
     }
   }
 ?>
@@ -54,6 +74,7 @@
       <p class="login-box-msg">Register New Account</p>
 
       <form action="register.php" method="post">
+        <p style="color: red;"><?php echo empty($nameError) ? '' : "*".$nameError; ?></p>
         <div class="input-group mb-3">
           <input type="text" name="name" class="form-control" placeholder="Username">
           <div class="input-group-append">
@@ -62,6 +83,8 @@
             </div>
           </div>
         </div>
+
+        <p style="color: red;"><?php echo empty($emailError) ? '' : "*".$emailError; ?></p>
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
@@ -70,6 +93,8 @@
             </div>
           </div>
         </div>
+
+        <p style="color: red;"><?php echo empty($passwordError) ? '' : "*".$passwordError; ?></p>
         <div class="input-group mb-3">
           <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">

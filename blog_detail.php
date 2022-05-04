@@ -32,19 +32,21 @@
   }
 
 
-  
-
   // insert comments in db
   if(!empty($_POST)){
-    $comment = $_POST['comment'];
-    $post_id = $_GET['id'];
+    if(empty($_POST['comment'])){
+      $cmtError = "Comment can't be empty";
+    }else{
+      $comment = $_POST['comment'];
+      $post_id = $_GET['id'];
 
-    $stmt = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES(:content,:author_id,:post_id)");
-    $com = $stmt->execute(
-        array(':content' => $comment,':author_id' => $_SESSION['user_id'], ':post_id' => $post_id)
-    );
-    if($com){
-        header('Location:blog_detail.php?id='.$post_id);
+      $stmt = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES(:content,:author_id,:post_id)");
+      $com = $stmt->execute(
+          array(':content' => $comment,':author_id' => $_SESSION['user_id'], ':post_id' => $post_id)
+      );
+      if($com){
+          header('Location:blog_detail.php?id='.$post_id);
+      }
     }
   }
   
@@ -133,6 +135,7 @@
                   <!-- <img class="img-fluid img-circle img-sm" src="dist/img/user5-128x128.jpg" alt="Alt Text"> -->
                   <!-- .img-push is used to add margin to elements next to floating images -->
                   <div class="img-push">
+                    <p style="color: red;"><?php echo empty($cmtError) ? '' : "*".$cmtError; ?></p>
                     <input type="text" name="comment" class="form-control form-control-sm" placeholder="Press enter to post comment">
                   </div>
                 </form>

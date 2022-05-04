@@ -10,25 +10,41 @@
   }
 
   if(!empty($_POST)){
-    $file = "../images/".$_FILES['image']['name'];
-    $imageType = pathinfo($file,PATHINFO_EXTENSION);
-
-    if($imageType != 'jpg' && $imageType != 'jpeg' && $imageType != 'png'){
-        echo "<script>alert('Image must be jpg,jpeg,png.');</script>";
+    // backend validation is most secure.
+    if(empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image'])){
+      if(empty($_POST['title'])){
+        $titleError = "Title can't be empty";
+      }
+      if(empty($_POST['content'])){
+        $contentError = "Content can't be empty";
+      }
+      // print'<pre>';
+      // print_r($_FILES['image']);
+      // exit();
+      if($_FILES['image']['name'] == null){
+        $imageError = "Image can't be empty";
+      }
     }else{
-        $title = $_POST['title'];
-        $content = $_POST['content'];
-        $image = $_FILES['image']['name'];
+      $file = "../images/".$_FILES['image']['name'];
+      $imageType = pathinfo($file,PATHINFO_EXTENSION);
 
-        move_uploaded_file($_FILES['image']['tmp_name'],$file);
+      if($imageType != 'jpg' && $imageType != 'jpeg' && $imageType != 'png'){
+          echo "<script>alert('Image must be jpg,jpeg,png.');</script>";
+      }else{
+          $title = $_POST['title'];
+          $content = $_POST['content'];
+          $image = $_FILES['image']['name'];
 
-        $stmt = $pdo->prepare("INSERT INTO posts(title,content,author_id,image) VALUES(:title,:content,:author_id,:image)");
-        $result = $stmt->execute(
-            array(':title' => $title,':content' => $content, ':author_id' => $_SESSION['user_id'], ':image' => $image)
-        );
-        if($result){
-            echo "<script>alert('Successfully Added.');</script>";
-        }
+          move_uploaded_file($_FILES['image']['tmp_name'],$file);
+
+          $stmt = $pdo->prepare("INSERT INTO posts(title,content,author_id,image) VALUES(:title,:content,:author_id,:image)");
+          $result = $stmt->execute(
+              array(':title' => $title,':content' => $content, ':author_id' => $_SESSION['user_id'], ':image' => $image)
+          );
+          if($result){
+              echo "<script>alert('Successfully Added.');</script>";
+          }
+      }
     }
   }
 
@@ -45,16 +61,19 @@
               <div class="card-body">
                   <form class="" action="add.php" method="post" enctype="multipart/form-data">
                       <div class="form-group">
-                          <label for="">Title</label>
-                          <input type="text"  class="form-control" name="title" value="" required>
+                          <label for="">Title</label><br>
+                          <p style="color: red;"><?php echo empty($titleError) ? '' : "*".$titleError; ?></p>
+                          <input type="text"  class="form-control" name="title" value="">
                       </div>
                       <div class="form-group">
-                          <label for="">Content</label>
-                          <textarea class="form-control" name="content" rows="8" cols="80" required></textarea>
+                          <label for="">Content</label><br>
+                          <p style="color: red;"><?php echo empty($contentError) ? '' : "*".$contentError; ?></p>
+                          <textarea class="form-control" name="content" rows="8" cols="80"></textarea>
                       </div>
                       <div class="form-group">
                           <label for="">Image</label><br>
-                          <input type="file" name="image" value="" required>
+                          <p style="color: red;"><?php echo empty($imageError) ? '' : "*".$imageError; ?></p>
+                          <input type="file" name="image" value="">
                       </div>
                       <div class="form-group">
                           <input type="submit"  class="btn btn-success
