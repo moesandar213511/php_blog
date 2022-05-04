@@ -1,6 +1,7 @@
 <?php 
   session_start();
   require '../config/config.php';
+  require '../config/common.php';
   // print_r($_SESSION);
   // die();
 
@@ -92,8 +93,8 @@
                     ?>
                     <tr>
                       <td><?php echo $i; ?></td>
-                      <td><?php echo $value['title']; ?></td>
-                      <td><?php echo substr($value['content'],0,80) ?></td>
+                      <td><?php echo escape($value['title']); ?></td>
+                      <td><?php echo escape(substr($value['content'],0,80)) ?></td>
                       <td style="width:10%;">
                         <!-- <div class="row">
                           <a href="#" type="button" class="btn btn-warning"><i class="fas fa-edit"></i><a>&nbsp;&nbsp;

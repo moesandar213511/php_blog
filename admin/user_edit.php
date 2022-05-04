@@ -91,12 +91,12 @@
                       <div class="form-group">
                           <label for="">Name</label>
                           <p style="color: red;"><?php echo empty($nameError) ? '' : "*".$nameError; ?></p>
-                          <input type="text"  class="form-control" name="name" value="<?php echo $result['name'] ?>">
+                          <input type="text"  class="form-control" name="name" value="<?php echo escape($result['name']) ?>">
                       </div>
                       <div class="form-group">
                           <label for="">Email</label>
                           <p style="color: red;"><?php echo empty($emailError) ? '' : "*".$emailError; ?></p>
-                          <input type="email"  class="form-control" name="email" value="<?php echo $result['email'] ?>">
+                          <input type="email"  class="form-control" name="email" value="<?php echo escape($result['email']) ?>">
                       </div>
                       <div class="form-group">
                           <label for="">Password</label><br>

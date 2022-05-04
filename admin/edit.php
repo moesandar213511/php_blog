@@ -75,12 +75,12 @@
                       <div class="form-group">
                           <label for="">Title</label><br>
                           <p style="color: red;"><?php echo empty($titleError) ? '' : "*".$titleError; ?></p>
-                          <input type="text"  class="form-control" name="title" value="<?php echo $result['title'] ?>" required>
+                          <input type="text"  class="form-control" name="title" value="<?php echo escape($result['title']) ?>" required>
                       </div>
                       <div class="form-group">
                           <label for="">Content</label><br>
                           <p style="color: red;"><?php echo empty($contentError) ? '' : "*".$contentError; ?></p>
-                          <textarea class="form-control" name="content" rows="8" cols="80" required><?php echo $result['content'] ?></textarea>
+                          <textarea class="form-control" name="content" rows="8" cols="80" required><?php echo escape($result['content']) ?></textarea>
                       </div>
                       <div class="form-group">
                           <label for="">Image</label><br>

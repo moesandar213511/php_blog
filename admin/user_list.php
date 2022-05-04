@@ -1,6 +1,7 @@
 <?php 
   session_start();
   require '../config/config.php';
+  require '../config/common.php';
   // print_r($_SESSION);
 
   // logout လုပ်ပြီးလဲ admin pages link တွေကို ထည့်ရှာလို့ မရအောင်တား။
@@ -92,8 +93,8 @@
                     ?>
                     <tr>
                       <td><?php echo $i; ?></td>
-                      <td><?php echo $value['name']; ?></td>
-                      <td><?php echo $value['email'] ?></td>
+                      <td><?php echo escape($value['name']); ?></td>
+                      <td><?php echo escape($value['email']) ?></td>
                       <td><?php if($value['role'] == 0){echo "User";}else{echo "Admin";} ?></td>
                       <td style="width:10%;">
                         <!-- <div class="row">

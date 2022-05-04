@@ -90,15 +90,15 @@
             <div class="card card-widget">
               <div class="card-header">
                 <div class="card-title" style="text-align:center;float:none;">
-                  <h4><?php echo $result['title'] ?></h4>
+                  <h4><?php echo escape($result['title']) ?></h4>
                 </div>
                 <!-- /.card-tools -->
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <img class="img-fluid pad" src="images/<?php echo $result['image'] ?>" alt="Photo"> <br><br>
+                <img class="img-fluid pad" src="images/<?php echo escape($result['image']) ?>" alt="Photo"> <br><br>
 
-                <p><?php echo $result['content']; ?></p>
+                <p><?php echo escape($result['content']); ?></p>
                 <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i> Share</button>
                 <button type="button" class="btn btn-default btn-sm"><i class="far fa-thumbs-up"></i> Like</button>
                 <span class="float-right text-muted">127 likes - 3 comments</span><br><br>
@@ -116,12 +116,12 @@
                   <?php if($comResult){ ?>
                     <?php foreach ($comResult as $key => $value) { ?>
                         <span class="username">
-                        <?php echo $authorResult[$key][0]['name'] ?>
+                        <?php echo escape($authorResult[$key][0]['name']) ?>
                         <span class="text-muted float-right">
-                        <?php echo $value['created_at'] ?>
+                        <?php echo escape($value['created_at']) ?>
                         </span>
                         </span><!-- /.username -->
-                      <?php echo $value['content'] ?>
+                      <?php echo escape($value['content']) ?>
                     <?php } ?>
                     
                   <?php }else{ ?>
@@ -136,7 +136,7 @@
               <div class="card-footer">
                 <form action="" method="post">
                   <!-- config/common.php -->
-                  <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+                  <input name="_token" type="hidden" value="<?php echo escape($_SESSION['_token']); ?>">
                   <!-- <img class="img-fluid img-circle img-sm" src="dist/img/user5-128x128.jpg" alt="Alt Text"> -->
                   <!-- .img-push is used to add margin to elements next to floating images -->
                   <div class="img-push">
